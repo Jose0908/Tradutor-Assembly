@@ -1,6 +1,5 @@
 # Trabalho da Disciplina de Software Básico - UnB 
-# Data: 01/01/2023
-
+# Data: 14/02/2023
 ## Alunos
 - José Roberto Interaminense Soares - 190130008
 - Camila Frealdo Fraga - 170007561
@@ -15,22 +14,28 @@ Com a seguinte versão do G++: g++ (Ubuntu 11.3.0-1ubuntu1~22.04) 11.3.0
 
 Para compilar, utilizar a seguinte linha de comando: 
 
-g++ -o montador main.cpp preprocess.cpp auxiliares.cpp macro.cpp objeto.cpp
+g++ -o tradutor main.cpp preprocess.cpp auxiliares.cpp tradutor.cpp
 
 ## Como rodar o programa?
-Para rodar o programa, deve-se escrever ./montador <-o> <arquivo.asm>
+Para rodar o programa, deve-se escrever ./tradutor <arquivo.asm>
 
-O programa apresenta três modos de operação: 
+Após este passo, será gerado um arquivo .s, que é a tradução do arquivo.asm.
 
-- Pre Processamento: **-p**
+## Como rodar o programa feito em assembly?
 
-É gerado arquivo .pre, com a etapa de pre-processamento feita.
+Para rodar, foi utilizado o NASM version 2.15.05, e o GNU ld (GNU Binutils for Ubuntu) 2.38.
 
-- Processamento de macros: **-m**
+O comando é:
+nasm -f elf32 <arquivo.asm> -o <arquivo.o> && ld -m elf_i386 <arquivo.o> -o <arquivo> && ./<arquivo>
 
-É gerado arquivo .mcr, com todas as macros resolvidas.
+## Funcionamento do programa
 
-- Saída do arquivo Objeto: **-o**
+Basicamente o programa traduz instrução a instrução do assembly inventado para o assembly x86. A dificuldade maior está nas funções de INPUT
+e OUTPUT, que comportam inteiros, char e strings. Para tais funções, foram feitas chamadas à outras funções feitas no próprio assembly x86.
 
-É gerado arquivo .o, com o arquivo objeto.
+As sessões (texto data e bss) foram separadas e tratadas individualmente no arquivo <tradutor.cpp.> Ele basicamente junta as sessões e junta com o
+código feito em assembly, guardado no arquivo <funcoes.asm>.
 
+Por fim, a função main lê o arquivo em assembly inventado, faz a sua pré-compilação e traduz para assembly x86.
+
+Diversas bibliotecas foram utilizadas, principalmente a de strings.
