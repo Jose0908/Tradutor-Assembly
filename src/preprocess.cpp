@@ -1,30 +1,35 @@
 #include "../headers/montador.h"
 
 vector<string> pre_processing(vector<string> program) {
-	vector<string> pre_processed;
+	vector<string> pre_processed = program;
 	size_t pos;
 	vector<string> equ_label;
 	vector<string> equ_values;
-	char delimiter = ':';
 
+	for (int i = 0; i < pre_processed.size(); i++) { 											// Transforma o programa todo para caixa alta
+		transform(pre_processed[i].begin(), pre_processed[i].end(), pre_processed[i].begin(), ::toupper);
+	}
+	
     // Remove Comentários
-	for (int i = 0; i < program.size(); i++) {								
-		pos = program[i].find(';');
+	for (int i = 0; i < pre_processed.size(); i++) {								
+		pos = pre_processed[i].find(';');
 		if (pos != string::npos) {
-			program[i].erase(pos);
+			pre_processed[i].erase(pos);
 		}
 	}
-	// Remove linhas em branco
-	for (string &s : program) {																
-		if (s[0] != ' ' && s.size() > 0) {
-			pre_processed.push_back(s);
+	// Se tem tab na linha, vira espaço
+	for (string &s : pre_processed) {
+		for (int i = 0; i < s.size(); i++) {
+			if (s[i] == '\t') {
+				s[i] = ' ';
+			}
 		}
 	}
     // Armazena o nome do rótulo antes de EQU e seu valor
 	for (string &line : pre_processed) {	
 		size_t found = line.find("EQU ");															
 		if (found != string::npos) {
-			equ_label.push_back(line.substr(0,line.find(delimiter)));
+			equ_label.push_back(line.substr(0,line.find(':')));
 			equ_values.push_back(line.substr(line.find("EQU ")+4));
 		}
 	}
@@ -33,7 +38,10 @@ vector<string> pre_processing(vector<string> program) {
 		for (int i = 0; i < equ_label.size(); i++) {
 			size_t found = line.find(equ_label[i]);
 			if (found != string::npos) {
-				line.replace(found, equ_label[i].size(), equ_values[i]);
+				// se o rótulo for seguido de uma quebra de linha, substitui
+				if (line[found+equ_label[i].size()] == '\n') {
+					line.replace(found, equ_label[i].size(), equ_values[i]);
+				}
 			}
 		}
 	}
@@ -110,7 +118,20 @@ vector<string> pre_processing(vector<string> program) {
 			}
 		}
 	}
-
+	// Remove linhas vazias e espaços no começo
+	for (int i = 0; i < pre_processed.size(); i++) {
+		if (pre_processed[i].empty()) {
+			pre_processed.erase(pre_processed.begin()+i);
+			i--;
+		}
+		else {
+			size_t size = pre_processed[i].size();
+			while (size > 0 && pre_processed[i][0] == ' ') {
+				pre_processed[i].erase(0, 1);
+				size--;
+			}
+		}
+	}
 
 	return pre_processed;
 }
