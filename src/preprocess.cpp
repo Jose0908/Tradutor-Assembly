@@ -10,6 +10,11 @@ vector<string> pre_processing(vector<string> program) {
 		transform(pre_processed[i].begin(), pre_processed[i].end(), pre_processed[i].begin(), ::toupper);
 	}
 	
+	  // REMOVE ^M from pre_processed
+    for (int i = 0; i < pre_processed.size(); i++) {
+        pre_processed[i].erase(remove(pre_processed[i].begin(), pre_processed[i].end(), '\r'), pre_processed[i].end());
+    }
+
     // Remove Comentários
 	for (int i = 0; i < pre_processed.size(); i++) {								
 		pos = pre_processed[i].find(';');

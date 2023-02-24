@@ -118,5 +118,6 @@ string offset_displacement(string argument) {
 		if (isdigit(num[0]))
 			argument += "*4";
     }
+
     return argument;
 }

@@ -30,7 +30,10 @@ vector<string> translating (vector<string> translation) {
             i--;
         }
     }
-
+    // REMOVE ^M from old_data_section
+    for (int i = 0; i < old_data_section.size(); i++) {
+        old_data_section[i].erase(remove(old_data_section[i].begin(), old_data_section[i].end(), '\r'), old_data_section[i].end());
+    }
     // Seção de dados
     new_data_section.push_back("section .data");
     for (int i = 1; i < old_data_section.size(); i++) {
@@ -52,6 +55,12 @@ vector<string> translating (vector<string> translation) {
     new_text_section.push_back("section .text");
     new_text_section.push_back("global _start");
     new_text_section.push_back("_start:");
+
+    // REMOVE ^M from old_text_section
+    for (int i = 0; i < old_text_section.size(); i++) {
+        old_text_section[i].erase(remove(old_text_section[i].begin(), old_text_section[i].end(), '\r'), old_text_section[i].end());
+    }
+
 
     for (int i = 1; i < old_text_section.size(); i++) {
         string command;
@@ -270,6 +279,8 @@ vector<string> translating (vector<string> translation) {
 
     vector<string> functions_asm = read_file("funcoes.asm");
     translate = concat_vectors(new_data_section, new_bss_section, new_text_section);
+
+
     translate = concat_asm(translate, functions_asm);
 
     return translate;

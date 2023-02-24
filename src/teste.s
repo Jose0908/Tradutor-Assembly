@@ -1,3 +1,51 @@
+section .data
+ZERO: dd 0
+ONE: dd 1
+out_msg: db " Quantidade de Bytes lidos/escritos: ",0
+
+section .bss
+OLDER: resd 1
+OLD: resd 1
+NEW: resd 1
+LIMIT: resd 1
+
+section .text
+global _start
+_start:
+push ebx
+mov ebx, [ZERO]
+mov dword [OLDER], ebx
+pop ebx
+push ebx
+mov ebx, [ONE]
+mov dword [OLD], ebx
+pop ebx
+push LIMIT
+call read_int
+push OLD
+call write_int
+FRONT: mov eax, [OLDER]
+add dword eax, [OLD]
+mov dword [NEW], eax
+sub dword eax, [LIMIT]
+cmp EAX,0 
+jg FINAL
+push NEW
+call write_int
+push ebx
+mov ebx, [OLD]
+mov dword [OLDER], ebx
+pop ebx
+push ebx
+mov ebx, [NEW]
+mov dword [OLD], ebx
+pop ebx
+jmp FRONT
+FINAL: push LIMIT
+call write_int
+mov eax, 1
+mov ebx, 0
+int 80h
 
 ; AUXILIAR FUNCTIONS (INPUT/OUTPUT)
 ; ------------ INT FUNCTIONS ------------
